@@ -1,18 +1,3 @@
-# -*- coding:utf8 -*-
-# !/usr/bin/env python
-# Copyright 2017 Google Inc. All Rights Reserved.
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#     http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
 
 from __future__ import print_function
 from future.standard_library import install_aliases
@@ -24,6 +9,7 @@ from urllib.error import HTTPError
 
 import json
 import os
+import datetime
 
 from flask import Flask
 from flask import request
@@ -52,55 +38,37 @@ def webhook():
 def processRequest(req):
     if req.get("result").get("action") != "yahooWeatherForecast":
         return {}
-    baseurl = "https://query.yahooapis.com/v1/public/yql?"
-    yql_query = makeYqlQuery(req)
-    if yql_query is None:
+    baseurl = "https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol="
+    alpha_query = makeAlphaQuery(req)
+    if alpha_query is None:
         return {}
-    yql_url = baseurl + urlencode({'q': yql_query}) + "&format=json"
-    result = urlopen(yql_url).read()
+    alpha_url = baseurl + alpha_query + "&apikey=W6FZRHLN6JUQWMX7"
+    result = urlopen(alpha_url).read()
     data = json.loads(result)
     res = makeWebhookResult(data)
     return res
 
 
-def makeYqlQuery(req):
+def makeAlphaQuery(req):
     result = req.get("result")
     parameters = result.get("parameters")
-    city = parameters.get("geo-city")
-    if city is None:
+    stock_symbol = str(parameters.get("stock_symbol"))
+    date = parameters.get("date")
+    if stock_sumbol is None:
         return None
+    if date is None:
+        date = str(datetime.date.today())
 
-    return "select * from weather.forecast where woeid in (select woeid from geo.places(1) where text='" + city + "')"
+    return [stock_symbol,date]
 
 
 def makeWebhookResult(data):
-    query = data.get('query')
-    if query is None:
-        return {}
+    timeseries = rcvd_data.get("Time Series (Daily)")
+    ofdate = timeseries.get(stockdate)
+    closevalue = str(ofdate.get("4. close"))
+    print(json.dumps(closevalue, indent=4))
 
-    result = query.get('results')
-    if result is None:
-        return {}
-
-    channel = result.get('channel')
-    if channel is None:
-        return {}
-
-    item = channel.get('item')
-    location = channel.get('location')
-    units = channel.get('units')
-    if (location is None) or (item is None) or (units is None):
-        return {}
-
-    condition = item.get('condition')
-    if condition is None:
-        return {}
-
-    # print(json.dumps(item, indent=4))
-
-    speech = "Today in " + location.get('city') + ": " + condition.get('text') + \
-             ", the temperature is " + condition.get('temp') + " " + units.get('temperature')
-
+    speech = "Today's price is " + closevalue
     print("Response:")
     print(speech)
 
@@ -109,7 +77,7 @@ def makeWebhookResult(data):
         "displayText": speech,
         # "data": data,
         # "contextOut": [],
-        "source": "apiai-weather-webhook-sample"
+        "source": "stockkbot"
     }
 
 
