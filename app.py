@@ -55,7 +55,7 @@ def makeAlphaQuery(req):
     parameters = result.get("parameters")
     stock_symbol = str(parameters.get("stock_symbol"))
     date = str(parameters.get("date"))
-    if stock_sumbol is None:
+    if stock_symbol is None:
         return None
     if date is None:
         date = str(datetime.date.today())
@@ -65,7 +65,7 @@ def makeAlphaQuery(req):
 
 def makeWebhookResult(data):
     timeseries = data.get("Time Series (Daily)")
-    ofdate = timeseries.get(stockdate)
+    ofdate = timeseries.get("2017-09-15")
     closevalue = str(ofdate.get("4. close"))
     print(json.dumps(closevalue, indent=4))
 
