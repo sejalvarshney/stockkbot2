@@ -4,9 +4,9 @@ from future.standard_library import install_aliases
 install_aliases()
 
 from urllib.parse import urlparse, urlencode
-from urllib.request import urlopen, Request
+#from urllib.request import urlopen, Request
 from urllib.error import HTTPError
-
+import urllib.request
 import json
 import os
 import datetime
@@ -42,8 +42,8 @@ def processRequest(req):
     alpha_query = makeAlphaQuery(req)
     if alpha_query is None:
         return {}
-    alpha_url = baseurl + alpha_query + "&apikey=W6FZRHLN6JUQWMX7"
-    result = urlopen(alpha_url).read()
+    alpha_url = baseurl + alpha_query[0] + "&apikey=W6FZRHLN6JUQWMX7"
+    result = urllib.request.urlopen(alpha_url).read()
     data = json.loads(result)
     res = makeWebhookResult(data)
     return res
@@ -53,7 +53,7 @@ def makeAlphaQuery(req):
     result = req.get("result")
     parameters = result.get("parameters")
     stock_symbol = str(parameters.get("stock_symbol"))
-    date = parameters.get("date")
+    date = str(parameters.get("date"))
     if stock_sumbol is None:
         return None
     if date is None:
