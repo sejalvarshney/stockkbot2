@@ -42,9 +42,9 @@ def processRequest(req):
     alpha_query = makeAlphaQuery(req)
     if alpha_query is None:
         return {}
-    alpha_url = baseurl + alpha_query[0] + "&apikey=W6FZRHLN6JUQWMX7"
-    result = urllib.request.urlopen(alpha_url).read()
-    data = json.loads(result)
+    alpha_url = "https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol=AAPL&apikey=KO6S7F5GV15OQ4G7"
+    result1 = urllib.request.urlopen(alpha_url).read()
+    data = json.loads(result1)
     res = makeWebhookResult(data)
     return res
 
