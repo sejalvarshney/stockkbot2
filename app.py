@@ -63,7 +63,7 @@ def makeAlphaQuery(req):
 
 
 def makeWebhookResult(data):
-    timeseries = rcvd_data.get("Time Series (Daily)")
+    timeseries = data.get("Time Series (Daily)")
     ofdate = timeseries.get(stockdate)
     closevalue = str(ofdate.get("4. close"))
     print(json.dumps(closevalue, indent=4))
