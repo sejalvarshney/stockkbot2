@@ -56,9 +56,6 @@ def makeAlphaQuery(req):
     stock_symbol = str(parameters.get("stock_symbol"))
     if stock_symbol is None:
         return None
-    if date is None:
-        date = str(datetime.date.today())
-
     return stock_symbol
 
 
