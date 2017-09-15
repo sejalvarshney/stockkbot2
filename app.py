@@ -43,7 +43,7 @@ def processRequest(req):
     alpha_query = makeAlphaQuery(req)
     if alpha_query is None:
         return {}
-    alpha_url = "https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol=AAPL&apikey=KO6S7F5GV15OQ4G7"
+    alpha_url = baseurl + alpha_query[0] + "&apikey=KO6S7F5GV15OQ4G7"
     result1 = urllib.request.urlopen(alpha_url).read()
     data = json.loads(result1)
     res = makeWebhookResult(data)
@@ -65,11 +65,11 @@ def makeAlphaQuery(req):
 
 def makeWebhookResult(data):
     timeseries = data.get("Time Series (Daily)")
-    ofdate = timeseries.get("2017-09-15")
+    ofdate = timeseries.get(alpha_query[1])
     closevalue = str(ofdate.get("4. close"))
     print(json.dumps(closevalue, indent=4))
 
-    speech = "Today's price is " + closevalue
+    speech = "The current value of the stock is: " + closevalue
     print("Response:")
     print(speech)
 
