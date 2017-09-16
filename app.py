@@ -43,10 +43,10 @@ def processRequest(req):
     alpha_query = makeAlphaQuery(req)
     if alpha_query is None:
         return {}
-    alpha_url = baseurl + alpha_query + "&apikey=KO6S7F5GV15OQ4G7"
+    alpha_url = baseurl + alpha_query[0] + "&apikey=KO6S7F5GV15OQ4G7"
     result1 = urllib.request.urlopen(alpha_url).read()
     data = json.loads(result1)
-    res = makeWebhookResult(data)
+    res = makeWebhookResult(data,alpha_query[1])
     return res
 
 
@@ -54,14 +54,15 @@ def makeAlphaQuery(req):
     result = req.get("result")
     parameters = result.get("parameters")
     stock_symbol = str(parameters.get("stock_symbol"))
+    date = str(parameters.get("date"))
     if stock_symbol is None:
         return None
-    return stock_symbol
+    return [stock_symbol,date]
 
 
-def makeWebhookResult(data):
+def makeWebhookResult(data,date):
     timeseries = data.get("Time Series (Daily)")
-    ofdate = timeseries.get(str(datetime.date.today()))
+    ofdate = timeseries.get(str(date))
     closevalue = str(ofdate.get("4. close"))
     print(json.dumps(closevalue, indent=4))
 
