@@ -36,63 +36,17 @@ def webhook():
 
 
 def processRequest(req):
-    if req.get("result").get("action") == "price":
-        
-        baseurl = "https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol="
-        alpha_query = makeAlphaQuery(req)
-        if alpha_query is None:
-            return {}
-        alpha_url = baseurl + alpha_query[0] + "&apikey=KO6S7F5GV15OQ4G7"
-        result1 = urllib.request.urlopen(alpha_url).read()
-        data = json.loads(result1)
-        res = makeWebhookResult(data,alpha_query[1])
-        return res
-        
-    # elif req.get("result").get("action") == "feelings":
-    #     res = makeWebhookResult(getTwitterFeelings(req), req, stock_symbol)
-    #     return res
-    
-    elif req.get("result").get("action") == "chart":
-        res = getChart(req)
-        return res
-        
-    else return {}
-    
-
-def getChart(req):
-    result = req.get("result")
-    parameters = result.get("parameters")
-    stock_symbol = parameters.get("stock_symbol")
-    chart_url = "https://www.etoro.com/markets/" + stock_symbol + "/chart"
-    speech = 'Here is your chart:'
-    chart_speech = "Chart for " + stock_symbol
-
-    if source == 'facebook':
-        return {
-            "speech": speech,
-            "displayText": speech,
-            "source": "apiai-wallstreetbot-webhook", 
-            "data": {
-                "facebook": {
-                  "attachment": {
-                    "type": "template",
-                    "payload": {
-                            "template_type":"button",
-                            "text":speech,
-                            "buttons":[
-                              {
-                                "type":"web_url",
-                                "url":chart_url,
-                                "title":chart_speech,
-                                "webview_height_ratio": "compact"
-                              },
-                            ]
-                        }
-                     }
-                }
-            }
-        }
-
+    if req.get("result").get("action") != "price":
+        return {}
+    baseurl = "https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol="
+    alpha_query = makeAlphaQuery(req)
+    if alpha_query is None:
+        return {}
+    alpha_url = baseurl + alpha_query[0] + "&apikey=KO6S7F5GV15OQ4G7"
+    result1 = urllib.request.urlopen(alpha_url).read()
+    data = json.loads(result1)
+    res = makeWebhookResult(data,alpha_query[1])
+    return res
 
 
 def makeAlphaQuery(req):
@@ -107,11 +61,11 @@ def makeAlphaQuery(req):
 
 def makeWebhookResult(data,date):
     timeseries = data.get("Time Series (Daily)")
-    ofdate = timeseries.get(date)
+    ofdate = timeseries.get(str(date))
     closevalue = str(ofdate.get("4. close"))
     print(json.dumps(closevalue, indent=4))
 
-    speech = "The value of @stock_symbol 's share dated @date is: " + closevalue
+    speech = "The current value of the stock is: " + closevalue
     print("Response:")
     print(speech)
 
