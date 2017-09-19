@@ -65,7 +65,7 @@ def makeWebhookResult(data,date):
     closevalue = str(ofdate.get("4. close"))
     print(json.dumps(closevalue, indent=4))
 
-    speech = "The current value of the stock is: " + closevalue
+    speech = "The value of the stock as on " + date + " is: " + closevalue
     print("Response:")
     print(speech)
 
