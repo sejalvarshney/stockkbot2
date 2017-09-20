@@ -38,7 +38,7 @@ def webhook():
 def processRequest(req):
     if req.get("result").get("action") != "price":
         return {}
-    baseurl = "https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol="
+    baseurl = "https://www.alphavantage.co/query?function=TIME_SERIES_DAILY_ADJUSTED&symbol="
     alpha_query = makeAlphaQuery(req)
     if alpha_query is None:
         return {}
