@@ -6,4 +6,4 @@ This is a really simple webhook implementation that gets Api.ai classification J
 # Deploy to:
 [![Deploy to Heroku](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy)
 
-# What does the service do?
+
